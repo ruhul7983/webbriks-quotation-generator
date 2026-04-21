@@ -22,39 +22,57 @@ export interface QuotationDetails {
   validUntil: string;
 }
 
-export interface ServicePackage {
+export interface ScopePhase {
   id: string;
-  name: string;
-  tagline: string;
-  features: string[];
-  frontendTech: string[];
-  backendTech: string[];
-  designTools: string[];
-  pages: string;
-  revisions: number;
-  deliveryDays: number;
-  supportDays: number;
-  price: number;
+  title: string;
+  description: string;
+  items: string[];
 }
 
-export interface Service {
+export interface TechStack {
+  frontend: string[];
+  backend: string[];
+  tools: string[];
+}
+
+export interface Settings {
+  currency: '$' | '৳';
+  taxRate: number;
+  discount: number;
+}
+
+export interface OptionalService {
   id: string;
-  name: string;
+  title: string;
+  price: number;
   description: string;
-  packages: ServicePackage[];
+  items: string[];
+  type: 'recurring' | 'one-time';
 }
 
 export interface QuotationData {
   company: CompanyDetails;
   client: ClientDetails;
   details: QuotationDetails;
-  services: Service[];
-  selectedServiceId: string;
-  selectedPackageId: string;
-  customNotes: string;
-  settings: {
-    currency: '$' | '৳';
-    taxRate: number;
-    discount: number;
+  
+  overview: string;
+  scopeOfWork: ScopePhase[];
+  techStack: TechStack;
+  features: string[];
+  adminFeatures: string[];
+  marketingSetup: string[];
+  deliveryTimeline: string;
+  
+  pricing: {
+    totalCost: number;
+    included: string[];
+    notIncluded: string[];
   };
+  
+  optionalServices: OptionalService[];
+  
+  workflow: string[];
+  finalNote: string;
+  
+  settings: Settings;
 }

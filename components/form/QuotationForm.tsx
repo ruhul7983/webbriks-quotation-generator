@@ -6,14 +6,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
-import ServiceManager from './ServiceManager';
+import { Button } from '@/components/ui/button';
 import {
   FileText,
   User,
   Building2,
-  Layers,
   Settings,
   StickyNote,
+  List,
+  Cpu,
+  Monitor,
+  LayoutDashboard,
+  Rocket,
+  Clock,
+  Briefcase,
+  Plus,
+  Trash2,
+  Sparkles
 } from 'lucide-react';
 
 function FormSection({
@@ -33,11 +42,11 @@ function FormSection({
     <div id={`section-${id}`} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div className="flex items-center gap-3">
-          <span className="text-[#019689]">{icon}</span>
+          <span className="text-gray-700">{icon}</span>
           <h2 className="font-semibold text-gray-900 text-base">{title}</h2>
         </div>
         {badge && (
-          <span className="text-xs bg-[#019689]/10 text-[#019689] font-semibold px-2.5 py-1 rounded-full">
+          <span className="text-xs bg-gray-200 text-gray-700 font-semibold px-2.5 py-1 rounded-full">
             {badge}
           </span>
         )}
@@ -50,237 +59,302 @@ function FormSection({
 }
 
 export default function QuotationForm() {
-  const { data, updateCompany, updateClient, updateDetails, updateSettings, setCustomNotes } =
-    useQuotationStore();
+  const { 
+    data, updateCompany, updateClient, updateDetails, loadTemplate, updateSettings,
+    updateOverview, updateTechStack, updateFeatures, updateAdminFeatures,
+    updateMarketingSetup, updateDeliveryTimeline, updateWorkflow, updateFinalNote,
+    updatePricing, addScopePhase, updateScopePhase, removeScopePhase,
+    addOptionalService, updateOptionalService, removeOptionalService
+  } = useQuotationStore();
+
+  const handleListChange = (val: string, updater: (arr: string[]) => void) => {
+    updater(val.split('\n'));
+  };
 
   return (
     <div className="space-y-6">
+
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-900 text-white p-5 rounded-xl shadow-md">
+        <div>
+          <h3 className="font-bold text-lg flex items-center gap-2"><Sparkles className="w-5 h-5 text-yellow-400" /> Start with a Template</h3>
+          <p className="text-sm text-gray-400">Instantly fill the proposal with boilerplate content.</p>
+        </div>
+        <div className="mt-4 sm:mt-0 flex gap-2 relative group">
+          <select 
+            defaultValue=""
+            onChange={(e) => {
+              if (e.target.value) {
+                loadTemplate(e.target.value as any);
+                e.target.selectedIndex = 0; // Reset
+              }
+            }}
+            className="px-4 py-2 rounded-md bg-white text-gray-900 font-semibold cursor-pointer outline-none hover:bg-gray-100 transition-colors"
+          >
+            <option value="" disabled>Choose a template...</option>
+            <option value="ecommerce">E-Commerce Website</option>
+            <option value="saas">SaaS Development</option>
+            <option value="service">Service / Agency Website</option>
+          </select>
+        </div>
+      </div>
+
       {/* ── Quotation Details ── */}
-      <FormSection
-        id="details"
-        title="Quotation Details"
-        icon={<FileText className="w-5 h-5" />}
-      >
+      <FormSection id="details" title="Document Details" icon={<FileText className="w-5 h-5" />}>
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-sm">Quotation Title</Label>
-            <Input
-              value={data.details.title}
-              onChange={(e) => updateDetails({ title: e.target.value })}
-              placeholder="e.g. Web Design & Development Service"
-            />
+            <Label className="text-sm">Proposal Title</Label>
+            <Input value={data.details.title} onChange={(e) => updateDetails({ title: e.target.value })} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-sm">Number</Label>
-              <Input
-                value={data.details.quotationNumber}
-                onChange={(e) =>
-                  updateDetails({ quotationNumber: e.target.value })
-                }
-              />
+              <Label className="text-sm">Quotation Number</Label>
+              <Input value={data.details.quotationNumber} onChange={(e) => updateDetails({ quotationNumber: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm">Date</Label>
-              <Input
-                type="date"
-                value={data.details.date}
-                onChange={(e) => updateDetails({ date: e.target.value })}
-              />
+              <Input type="date" value={data.details.date} onChange={(e) => updateDetails({ date: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm">Valid Until</Label>
-              <Input
-                type="date"
-                value={data.details.validUntil}
-                onChange={(e) => updateDetails({ validUntil: e.target.value })}
-              />
+              <Input type="date" value={data.details.validUntil} onChange={(e) => updateDetails({ validUntil: e.target.value })} />
             </div>
           </div>
         </div>
       </FormSection>
 
-      {/* ── Client Information ── */}
-      <FormSection
-        id="client"
-        title="Client Information"
-        icon={<User className="w-5 h-5" />}
-        badge={data.client.companyName || undefined}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* ── Client & Company Information ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FormSection id="client" title="Client Info" icon={<User className="w-5 h-5" />}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Contact Name</Label>
+                <Input value={data.client.contactName} onChange={(e) => updateClient({ contactName: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Company</Label>
+                <Input value={data.client.companyName} onChange={(e) => updateClient({ companyName: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Address</Label>
+              <Textarea value={data.client.address} onChange={(e) => updateClient({ address: e.target.value })} rows={2} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Email</Label>
+                <Input type="email" value={data.client.email} onChange={(e) => updateClient({ email: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Phone</Label>
+                <Input value={data.client.phone} onChange={(e) => updateClient({ phone: e.target.value })} />
+              </div>
+            </div>
+          </div>
+        </FormSection>
+
+        <FormSection id="company" title="Your Company" icon={<Building2 className="w-5 h-5" />}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Company Name</Label>
+                <Input value={data.company.name} onChange={(e) => updateCompany({ name: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Website</Label>
+                <Input value={data.company.website} onChange={(e) => updateCompany({ website: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Address</Label>
+              <Textarea value={data.company.address} onChange={(e) => updateCompany({ address: e.target.value })} rows={2} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-sm">Email</Label>
+                <Input type="email" value={data.company.email} onChange={(e) => updateCompany({ email: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Phone</Label>
+                <Input value={data.company.phone} onChange={(e) => updateCompany({ phone: e.target.value })} />
+              </div>
+            </div>
+          </div>
+        </FormSection>
+      </div>
+
+      {/* ── Project Overview ── */}
+      <FormSection id="overview" title="Project Overview" icon={<Monitor className="w-5 h-5" />}>
+        <Textarea 
+          value={data.overview} 
+          onChange={(e) => updateOverview(e.target.value)} 
+          rows={4}
+          placeholder="Describe the overall goal of this project..."
+        />
+      </FormSection>
+
+      {/* ── Scope of Work ── */}
+      <FormSection id="scope" title="Scope of Work (Phases)" icon={<Briefcase className="w-5 h-5" />}>
+        <div className="space-y-4">
+          {data.scopeOfWork.map((phase, idx) => (
+            <div key={phase.id} className="p-4 border border-gray-200 rounded-lg relative bg-gray-50">
+              <button 
+                onClick={() => removeScopePhase(phase.id)}
+                className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+              ><Trash2 className="w-4 h-4" /></button>
+              <div className="space-y-3">
+                <div className="space-y-1.5 w-full pr-8">
+                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Phase {idx + 1} Title</Label>
+                  <Input value={phase.title} onChange={e => updateScopePhase(phase.id, { title: e.target.value })} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Description</Label>
+                  <Textarea value={phase.description} onChange={e => updateScopePhase(phase.id, { description: e.target.value })} rows={2} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-widest">List Items (One per line)</Label>
+                  <Textarea value={phase.items.join('\n')} onChange={e => updateScopePhase(phase.id, { items: e.target.value.split('\n') })} rows={3} />
+                </div>
+              </div>
+            </div>
+          ))}
+          <Button onClick={addScopePhase} variant="outline" className="w-full border-dashed"><Plus className="w-4 h-4 mr-2"/> Add Phase</Button>
+        </div>
+      </FormSection>
+
+      {/* ── Tech Stack ── */}
+      <FormSection id="tech" title="Technology Stack" icon={<Cpu className="w-5 h-5" />}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-sm">Client Name</Label>
-            <Input
-              value={data.client.contactName}
-              onChange={(e) => updateClient({ contactName: e.target.value })}
-              placeholder="Jane Doe"
-            />
+            <Label className="text-sm">Frontend (Comma separated)</Label>
+            <Input value={data.techStack.frontend.join(', ')} onChange={e => updateTechStack({ frontend: e.target.value.split(',').map(s=>s.trim()).filter(Boolean) })} placeholder="Next.js, Tailwind..." />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-sm">Company</Label>
-            <Input
-              value={data.client.companyName}
-              onChange={(e) => updateClient({ companyName: e.target.value })}
-              placeholder="Acme Corp"
-            />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-sm">Address</Label>
-            <Textarea
-              value={data.client.address}
-              onChange={(e) => updateClient({ address: e.target.value })}
-              placeholder="Client address"
-              rows={2}
-              className="resize-none"
-            />
+            <Label className="text-sm">Backend (Comma separated)</Label>
+            <Input value={data.techStack.backend.join(', ')} onChange={e => updateTechStack({ backend: e.target.value.split(',').map(s=>s.trim()).filter(Boolean) })} placeholder="Node.js, PostgreSQL..." />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-sm">Email</Label>
-            <Input
-              type="email"
-              value={data.client.email}
-              onChange={(e) => updateClient({ email: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Phone</Label>
-            <Input
-              value={data.client.phone}
-              onChange={(e) => updateClient({ phone: e.target.value })}
-            />
+            <Label className="text-sm">Tools (Comma separated)</Label>
+            <Input value={data.techStack.tools.join(', ')} onChange={e => updateTechStack({ tools: e.target.value.split(',').map(s=>s.trim()).filter(Boolean) })} placeholder="Figma, GitHub..." />
           </div>
         </div>
       </FormSection>
 
-      {/* ── Company Details ── */}
-      <FormSection
-        id="company"
-        title="Your Company Details"
-        icon={<Building2 className="w-5 h-5" />}
-        badge={data.company.name || undefined}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label className="text-sm">Company Name</Label>
-            <Input
-              value={data.company.name}
-              onChange={(e) => updateCompany({ name: e.target.value })}
-            />
+      {/* ── Features List ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FormSection id="features" title="Platform Features" icon={<List className="w-5 h-5" />}>
+          <Label className="text-xs mb-2 block text-gray-500">One feature per line</Label>
+          <Textarea value={data.features.join('\n')} onChange={e => handleListChange(e.target.value, updateFeatures)} rows={6} />
+        </FormSection>
+        <FormSection id="admin" title="Admin Dashboard" icon={<LayoutDashboard className="w-5 h-5" />}>
+          <Label className="text-xs mb-2 block text-gray-500">One feature per line</Label>
+          <Textarea value={data.adminFeatures.join('\n')} onChange={e => handleListChange(e.target.value, updateAdminFeatures)} rows={6} />
+        </FormSection>
+      </div>
+
+      {/* ── Marketing & Delivery ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FormSection id="marketing" title="Marketing Setup" icon={<Rocket className="w-5 h-5" />}>
+          <Label className="text-xs mb-2 block text-gray-500">One item per line</Label>
+          <Textarea value={data.marketingSetup.join('\n')} onChange={e => handleListChange(e.target.value, updateMarketingSetup)} rows={3} />
+        </FormSection>
+        <FormSection id="delivery" title="Delivery Timeline" icon={<Clock className="w-5 h-5" />}>
+          <Label className="text-xs mb-2 block text-gray-500">Timeline Description</Label>
+          <Textarea value={data.deliveryTimeline} onChange={e => updateDeliveryTimeline(e.target.value)} rows={3} />
+        </FormSection>
+      </div>
+
+      {/* ── Pricing Base ── */}
+      <FormSection id="pricing" title="Website Pricing" icon={<Settings className="w-5 h-5" />}>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-sm text-gray-900 font-bold">Total Base Cost</Label>
+              <Input type="number" value={data.pricing.totalCost} onChange={e => updatePricing({ totalCost: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-gray-900 font-bold">Document Currency</Label>
+              <select 
+                value={data.settings.currency}
+                onChange={e => updateSettings({ currency: e.target.value as any })}
+                className="flex h-10 w-full rounded-md border border-teal-200 bg-teal-50/40 px-3 py-2 text-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#019689] focus-visible:bg-white transition-colors cursor-pointer"
+              >
+                <option value="৳">Bangladeshi Taka (৳)</option>
+                <option value="$">US Dollar ($)</option>
+                <option value="€">Euro (€)</option>
+                <option value="£">British Pound (£)</option>
+              </select>
+            </div>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Website</Label>
-            <Input
-              value={data.company.website}
-              onChange={(e) => updateCompany({ website: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-sm">Address</Label>
-            <Textarea
-              value={data.company.address}
-              onChange={(e) => updateCompany({ address: e.target.value })}
-              rows={2}
-              className="resize-none"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Email</Label>
-            <Input
-              type="email"
-              value={data.company.email}
-              onChange={(e) => updateCompany({ email: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Phone</Label>
-            <Input
-              value={data.company.phone}
-              onChange={(e) => updateCompany({ phone: e.target.value })}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-sm">What's Included (One per line)</Label>
+              <Textarea value={data.pricing.included.join('\n')} onChange={e => handleListChange(e.target.value, (arr) => updatePricing({ included: arr }))} rows={4} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">What's NOT Included (One per line)</Label>
+              <Textarea value={data.pricing.notIncluded.join('\n')} onChange={e => handleListChange(e.target.value, (arr) => updatePricing({ notIncluded: arr }))} rows={4} />
+            </div>
           </div>
         </div>
       </FormSection>
 
-      {/* ── Services & Packages ── */}
-      <FormSection
-        id="services"
-        title="Services & Packages"
-        icon={<Layers className="w-5 h-5" />}
-        badge={`${data.services.length} service${data.services.length !== 1 ? 's' : ''}`}
-      >
-        <ServiceManager />
-      </FormSection>
-
-      {/* ── Settings ── */}
-      <FormSection
-        id="settings"
-        title="Pricing Settings"
-        icon={<Settings className="w-5 h-5" />}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="space-y-1.5">
-            <Label className="text-sm">Currency</Label>
-            <Select
-              value={data.settings.currency}
-              onChange={(e) =>
-                updateSettings({
-                  currency: e.target.value as '$' | '৳',
-                })
-              }
-            >
-              <option value="$">USD ($)</option>
-              <option value="৳">BDT (৳)</option>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Tax Rate (%)</Label>
-            <Input
-              type="number"
-              min="0"
-              max="100"
-              value={data.settings.taxRate}
-              onChange={(e) =>
-                updateSettings({ taxRate: Number(e.target.value) })
-              }
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Discount (Amount)</Label>
-            <Input
-              type="number"
-              min="0"
-              value={data.settings.discount}
-              onChange={(e) =>
-                updateSettings({ discount: Number(e.target.value) })
-              }
-            />
-          </div>
+      {/* ── Optional Add-ons ── */}
+      <FormSection id="optional" title="Optional Services / Hosting" icon={<Plus className="w-5 h-5" />}>
+        <div className="space-y-4">
+          {data.optionalServices.map((srv) => (
+            <div key={srv.id} className="p-4 border border-gray-200 rounded-lg relative bg-white shadow-sm">
+              <button 
+                onClick={() => removeOptionalService(srv.id)}
+                className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+              ><Trash2 className="w-4 h-4" /></button>
+              
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 sm:col-span-6 pr-8 space-y-1.5">
+                  <Label className="text-xs">Service Title</Label>
+                  <Input value={srv.title} onChange={e => updateOptionalService(srv.id, { title: e.target.value })} />
+                </div>
+                <div className="col-span-6 sm:col-span-3 space-y-1.5">
+                  <Label className="text-xs">Price</Label>
+                  <Input type="number" value={srv.price} onChange={e => updateOptionalService(srv.id, { price: Number(e.target.value) })} />
+                </div>
+                <div className="col-span-6 sm:col-span-3 space-y-1.5">
+                  <Label className="text-xs">Recurrence</Label>
+                  <Select value={srv.type} onChange={e => updateOptionalService(srv.id, { type: e.target.value as any })}>
+                    <option value="one-time">One Time</option>
+                    <option value="recurring">Recurring (Yearly)</option>
+                  </Select>
+                </div>
+                <div className="col-span-12 space-y-1.5">
+                  <Label className="text-xs">Description</Label>
+                  <Textarea value={srv.description} onChange={e => updateOptionalService(srv.id, { description: e.target.value })} rows={1}/>
+                </div>
+                <div className="col-span-12 space-y-1.5">
+                  <Label className="text-xs">Features List (One per line, optional)</Label>
+                  <Textarea value={srv.items.join('\n')} onChange={e => updateOptionalService(srv.id, { items: e.target.value.split('\n') })} rows={2}/>
+                </div>
+              </div>
+            </div>
+          ))}
+          <Button onClick={addOptionalService} variant="outline" className="w-full border-dashed"><Plus className="w-4 h-4 mr-2"/> Add Optional Service</Button>
         </div>
       </FormSection>
 
-      {/* ── Terms & Notes ── */}
-      <FormSection
-        id="notes"
-        title="Terms & Notes"
-        icon={<StickyNote className="w-5 h-5" />}
-      >
-        <div className="space-y-2">
-          <Label className="text-sm">
-            Terms, conditions, or additional notes (shown on quotation)
-          </Label>
-          <Textarea
-            value={data.customNotes}
-            onChange={(e) => setCustomNotes(e.target.value)}
-            rows={5}
-            className="resize-none"
-            placeholder="Enter terms and conditions..."
+      {/* ── Workflow & Notes ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FormSection id="workflow" title="Workflow Summary" icon={<List className="w-5 h-5" />}>
+           <Label className="text-xs mb-2 block text-gray-500">Ordered Steps (One per line)</Label>
+           <Textarea value={data.workflow.join('\n')} onChange={e => handleListChange(e.target.value, updateWorkflow)} rows={5} />
+        </FormSection>
+        <FormSection id="notes" title="Final Note" icon={<StickyNote className="w-5 h-5" />}>
+          <Textarea 
+            value={data.finalNote} 
+            onChange={(e) => updateFinalNote(e.target.value)} 
+            rows={6}
           />
-          <p className="text-xs text-gray-500">
-            Use bullet points (•) for a clean list format in the PDF.
-          </p>
-        </div>
-      </FormSection>
+        </FormSection>
+      </div>
+
     </div>
   );
 }
-

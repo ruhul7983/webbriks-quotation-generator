@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { QuotationData, Service, ServicePackage } from '@/types';
+import { QuotationData, ScopePhase, OptionalService, Settings } from '@/types';
 import { format } from 'date-fns';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -9,23 +9,273 @@ interface QuotationStore {
   updateCompany: (company: Partial<QuotationData['company']>) => void;
   updateClient: (client: Partial<QuotationData['client']>) => void;
   updateDetails: (details: Partial<QuotationData['details']>) => void;
-  updateSettings: (settings: Partial<QuotationData['settings']>) => void;
-  setCustomNotes: (notes: string) => void;
-  // Service CRUD
-  addService: () => void;
-  updateService: (id: string, updates: Partial<Omit<Service, 'id' | 'packages'>>) => void;
-  removeService: (id: string) => void;
-  selectService: (id: string) => void;
-  // Package CRUD
-  addPackage: (serviceId: string) => void;
-  updatePackage: (serviceId: string, packageId: string, updates: Partial<Omit<ServicePackage, 'id'>>) => void;
-  removePackage: (serviceId: string, packageId: string) => void;
-  selectPackage: (packageId: string) => void;
+  updateSettings: (settings: Partial<Settings>) => void;
+  
+  // Section Updates
+  updateOverview: (overview: string) => void;
+  updateTechStack: (stack: Partial<QuotationData['techStack']>) => void;
+  updateFeatures: (features: string[]) => void;
+  updateAdminFeatures: (features: string[]) => void;
+  updateMarketingSetup: (setup: string[]) => void;
+  updateDeliveryTimeline: (timeline: string) => void;
+  updateWorkflow: (workflow: string[]) => void;
+  updateFinalNote: (note: string) => void;
+  
+  // Pricing Updates
+  updatePricing: (pricing: Partial<QuotationData['pricing']>) => void;
+
+  // Scope Phase CRUD
+  addScopePhase: () => void;
+  updateScopePhase: (id: string, updates: Partial<ScopePhase>) => void;
+  removeScopePhase: (id: string) => void;
+
+  // Optional Services CRUD
+  addOptionalService: () => void;
+  updateOptionalService: (id: string, updates: Partial<OptionalService>) => void;
+  removeOptionalService: (id: string) => void;
+
+  // Template Loader
+  loadTemplate: (type: 'ecommerce' | 'saas' | 'service') => void;
 }
 
-const defaultServiceId = generateId();
-const defaultPkg1Id = generateId();
-const defaultPkg2Id = generateId();
+const ecommerceTemplate: Partial<QuotationData> = {
+  details: {
+    title: 'E-commerce Website Design & Development Quotation',
+    quotationNumber: `QT-${format(new Date(), 'yyyyMMdd')}-01`,
+    date: format(new Date(), 'yyyy-MM-dd'),
+    validUntil: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+  },
+  overview: 'We will design and develop a complete e-commerce website tailored to your business, inspired by modern platforms, ensuring a clean, user-friendly, and conversion-focused experience.',
+  scopeOfWork: [
+    {
+      id: generateId(),
+      title: 'UI/UX Design Phase',
+      description: 'Clean, modern, and premium UI design\nFully responsive (Mobile + Tablet + Desktop)',
+      items: [
+        'Full UI design shared for review.',
+        'Feedback and revisions finalized in this phase.',
+        'Upon approval, development begins.'
+      ]
+    },
+    {
+      id: generateId(),
+      title: 'Frontend & Backend Development',
+      description: 'Complete scalable development of client and admin sides.',
+      items: []
+    }
+  ],
+  techStack: {
+    frontend: ['Next.js', 'Tailwind CSS', 'shadcn UI'],
+    backend: ['Node.js'],
+    tools: ['Figma']
+  },
+  features: [
+    'Product listing with categories & filters',
+    'Product details page',
+    'Add to cart & checkout system',
+    'User login / registration',
+    'Order placement & tracking',
+    'Mobile optimized speed performance'
+  ],
+  adminFeatures: [
+    'Product Management',
+    'Category Management',
+    'Inventory Management',
+    'Order Management',
+    'Customer Management'
+  ],
+  marketingSetup: [
+    'Facebook Pixel setup',
+    'Conversion tracking ready structure'
+  ],
+  deliveryTimeline: '7 – 10 Working Days',
+  pricing: {
+    totalCost: 25000,
+    included: [
+      'Complete UI/UX Design',
+      'Full Website Development',
+      'Admin Dashboard'
+    ],
+    notIncluded: [
+      'Domain Cost',
+      'Hosting Cost',
+      'Third-party subscriptions'
+    ]
+  },
+  optionalServices: [
+    {
+      id: generateId(),
+      title: 'VPS Hosting Plan',
+      price: 5000,
+      type: 'recurring',
+      description: 'Secure server environment and deployment setup',
+      items: []
+    }
+  ],
+  workflow: [
+    'UI Design',
+    'Feedback & Approval',
+    'Development',
+    'Testing',
+    'Delivery'
+  ],
+  finalNote: 'We focus on building business-ready eCommerce solutions that help brands grow online smoothly.'
+};
+
+const saasTemplate: Partial<QuotationData> = {
+  details: {
+    title: 'SaaS Platform Development Quotation',
+    quotationNumber: `QT-${format(new Date(), 'yyyyMMdd')}-02`,
+    date: format(new Date(), 'yyyy-MM-dd'),
+    validUntil: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+  },
+  overview: 'We will develop a customized, scalable Software-as-a-Service (SaaS) platform tailored to your specific operational needs with multi-tenancy and subscription management out of the box.',
+  scopeOfWork: [
+    {
+      id: generateId(),
+      title: 'Architecture & System Design',
+      description: 'Database schema design and API structuring',
+      items: ['System flow wireframing', 'Database modeling and tenant isolation planning']
+    },
+    {
+      id: generateId(),
+      title: 'SaaS Platform Development',
+      description: 'Full-stack application building',
+      items: ['Multi-tenant backend integration', 'Frontend app and dashboard creation']
+    }
+  ],
+  techStack: {
+    frontend: ['React', 'Next.js', 'Tailwind CSS'],
+    backend: ['Node.js', 'Express', 'PostgreSQL'],
+    tools: ['Docker', 'AWS']
+  },
+  features: [
+    'User roles & permissions',
+    'Subscription & Stripe billing integration',
+    'Tenant data isolation',
+    'Scalable API endpoints',
+    'Email notifications & triggers'
+  ],
+  adminFeatures: [
+    'Super Admin Dashboard',
+    'Tenant & User Management',
+    'Global Subscription Analytics',
+    'Billing issue monitoring'
+  ],
+  marketingSetup: [
+    'Google Analytics Integration',
+    'SEO foundation setup'
+  ],
+  deliveryTimeline: '45 – 60 Working Days\n\n(Includes 2 weeks beta testing)',
+  pricing: {
+    totalCost: 150000,
+    included: [
+      'B2B SaaS Web Application',
+      'Stripe Integration',
+      'Super Admin Dashboard'
+    ],
+    notIncluded: [
+      'AWS / Server Costs',
+      'Stripe Transaction Fees',
+      'Post-launch Feature requests'
+    ]
+  },
+  optionalServices: [
+    {
+      id: generateId(),
+      title: 'Monthly Maintenance & Support',
+      price: 20000,
+      type: 'recurring',
+      description: 'Guaranteed SLAs, bug fixes, and minor updates every month.',
+      items: []
+    }
+  ],
+  workflow: [
+    'Architecture Approval',
+    'Frontend Setup',
+    'Backend Integration',
+    'Beta Release & Q/A',
+    'Live Launch'
+  ],
+  finalNote: 'We build enterprise-grade SaaS products ensuring maximum security and scalability.'
+};
+
+const serviceTemplate: Partial<QuotationData> = {
+  details: {
+    title: 'Service & Agency Website Quotation',
+    quotationNumber: `QT-${format(new Date(), 'yyyyMMdd')}-03`,
+    date: format(new Date(), 'yyyy-MM-dd'),
+    validUntil: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+  },
+  overview: 'A premium, high-conversion landing page and multi-page corporate website to showcase your services, build trust, and seamlessly capture client leads.',
+  scopeOfWork: [
+    {
+      id: generateId(),
+      title: 'Design & Prototyping',
+      description: 'Modern corporate identity and web mockup',
+      items: ['Brand alignment', 'Home page and internal pages layout design']
+    },
+    {
+      id: generateId(),
+      title: 'Responsive Development',
+      description: 'Fast and responsive site creation',
+      items: ['Cross-browser compatibility', 'Mobile and tablet optimization']
+    }
+  ],
+  techStack: {
+    frontend: ['Next.js', 'Tailwind', 'Framer Motion'],
+    backend: ['Headless CMS (Sanity)'],
+    tools: ['Figma']
+  },
+  features: [
+    'Dynamic Portfolio / Case Studies',
+    'Service detail pages',
+    'Lead generation contact forms',
+    'Fast loading static generation',
+    'Blog / News section'
+  ],
+  adminFeatures: [
+    'Easy content updating via Headless CMS',
+    'Blog post publishing',
+    'Form submission viewing'
+  ],
+  marketingSetup: [
+    'Basic On-Page SEO',
+    'Sitemap submission'
+  ],
+  deliveryTimeline: '14 – 20 Working Days',
+  pricing: {
+    totalCost: 35000,
+    included: [
+      'Up to 10 Custom Pages',
+      'CMS Integration',
+      'Basic SEO Setup'
+    ],
+    notIncluded: [
+      'Domain/Hosting',
+      'Content Writing',
+      'Advanced Custom Animations'
+    ]
+  },
+  optionalServices: [
+    {
+      id: generateId(),
+      title: 'Professional Copywriting',
+      price: 8000,
+      type: 'one-time',
+      description: 'Expertly written site copy to maximize conversion on up to 5 pages.',
+      items: []
+    }
+  ],
+  workflow: [
+    'Design Approval',
+    'Development',
+    'Content Integration',
+    'Final Review',
+    'Deployment'
+  ],
+  finalNote: 'Your new website will establish serious authority and convert traffic into quality leads.'
+};
 
 const initialState: QuotationData = {
   company: {
@@ -43,72 +293,20 @@ const initialState: QuotationData = {
     email: 'jane.doe@acmecorp.com',
     phone: '+1 (555) 987-6543',
   },
-  details: {
-    title: 'Web Design & Development Service',
-    quotationNumber: `QT-${format(new Date(), 'yyyyMMdd')}-01`,
-    date: format(new Date(), 'yyyy-MM-dd'),
-    validUntil: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
-  },
-  services: [
-    {
-      id: defaultServiceId,
-      name: 'Frontend Development',
-      description: 'Modern, responsive frontend development with cutting-edge technologies',
-      packages: [
-        {
-          id: defaultPkg1Id,
-          name: 'Starter Package',
-          tagline: 'Perfect for small businesses and startups',
-          features: [
-            'Responsive Design',
-            'Up to 5 Pages',
-            'Contact Form Integration',
-            'Basic SEO Setup',
-            'Mobile-Friendly Layout',
-            'Cross-Browser Support',
-          ],
-          frontendTech: ['HTML5', 'CSS3', 'JavaScript', 'React'],
-          backendTech: [],
-          designTools: ['Figma'],
-          pages: '3-5',
-          revisions: 2,
-          deliveryDays: 15,
-          supportDays: 15,
-          price: 1500,
-        },
-        {
-          id: defaultPkg2Id,
-          name: 'Professional Package',
-          tagline: 'Complete solution for growing businesses',
-          features: [
-            'Responsive Design',
-            'Up to 12 Pages',
-            'Advanced Forms & Validation',
-            'SEO Optimization',
-            'Performance Optimization',
-            'Animations & Micro-interactions',
-            'CMS Integration',
-            'Analytics & Tracking Setup',
-            'API Integration',
-          ],
-          frontendTech: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS'],
-          backendTech: ['Node.js', 'Express.js', 'PostgreSQL'],
-          designTools: ['Figma'],
-          pages: '8-12',
-          revisions: 4,
-          deliveryDays: 30,
-          supportDays: 30,
-          price: 3500,
-        },
-      ],
-    },
-  ],
-  selectedServiceId: defaultServiceId,
-  selectedPackageId: defaultPkg1Id,
-  customNotes:
-    '• 50% advance payment required to begin the project.\n• Remaining 50% due upon project completion.\n• Additional revisions beyond the package limit will be billed separately.\n• Content (text, images) to be provided by the client.\n• Timeline begins after initial payment and content receipt.',
+  details: ecommerceTemplate.details as any,
+  overview: ecommerceTemplate.overview as string,
+  scopeOfWork: ecommerceTemplate.scopeOfWork as ScopePhase[],
+  techStack: ecommerceTemplate.techStack as any,
+  features: ecommerceTemplate.features as string[],
+  adminFeatures: ecommerceTemplate.adminFeatures as string[],
+  marketingSetup: ecommerceTemplate.marketingSetup as string[],
+  deliveryTimeline: ecommerceTemplate.deliveryTimeline as string,
+  pricing: ecommerceTemplate.pricing as any,
+  optionalServices: ecommerceTemplate.optionalServices as OptionalService[],
+  workflow: ecommerceTemplate.workflow as string[],
+  finalNote: ecommerceTemplate.finalNote as string,
   settings: {
-    currency: '$',
+    currency: '৳',
     taxRate: 0,
     discount: 0,
   },
@@ -117,185 +315,77 @@ const initialState: QuotationData = {
 export const useQuotationStore = create<QuotationStore>((set) => ({
   data: initialState,
 
-  updateCompany: (company) =>
-    set((state) => ({
-      data: { ...state.data, company: { ...state.data.company, ...company } },
-    })),
+  updateCompany: (company) => set((state) => ({ data: { ...state.data, company: { ...state.data.company, ...company } } })),
+  updateClient: (client) => set((state) => ({ data: { ...state.data, client: { ...state.data.client, ...client } } })),
+  updateDetails: (details) => set((state) => ({ data: { ...state.data, details: { ...state.data.details, ...details } } })),
+  updateSettings: (settings) => set((state) => ({ data: { ...state.data, settings: { ...state.data.settings, ...settings } } })),
+  
+  updateOverview: (overview) => set((state) => ({ data: { ...state.data, overview } })),
+  updateTechStack: (stack) => set((state) => ({ data: { ...state.data, techStack: { ...state.data.techStack, ...stack } } })),
+  updateFeatures: (features) => set((state) => ({ data: { ...state.data, features } })),
+  updateAdminFeatures: (adminFeatures) => set((state) => ({ data: { ...state.data, adminFeatures } })),
+  updateMarketingSetup: (marketingSetup) => set((state) => ({ data: { ...state.data, marketingSetup } })),
+  updateDeliveryTimeline: (deliveryTimeline) => set((state) => ({ data: { ...state.data, deliveryTimeline } })),
+  updateWorkflow: (workflow) => set((state) => ({ data: { ...state.data, workflow } })),
+  updateFinalNote: (finalNote) => set((state) => ({ data: { ...state.data, finalNote } })),
+  
+  updatePricing: (pricing) => set((state) => ({ data: { ...state.data, pricing: { ...state.data.pricing, ...pricing } } })),
 
-  updateClient: (client) =>
-    set((state) => ({
-      data: { ...state.data, client: { ...state.data.client, ...client } },
-    })),
+  addScopePhase: () => set((state) => ({
+    data: {
+      ...state.data,
+      scopeOfWork: [
+        ...state.data.scopeOfWork,
+        { id: generateId(), title: 'New Phase', description: '', items: [] }
+      ]
+    }
+  })),
+  
+  updateScopePhase: (id, updates) => set((state) => ({
+    data: {
+      ...state.data,
+      scopeOfWork: state.data.scopeOfWork.map(p => p.id === id ? { ...p, ...updates } : p)
+    }
+  })),
 
-  updateDetails: (details) =>
-    set((state) => ({
-      data: { ...state.data, details: { ...state.data.details, ...details } },
-    })),
+  removeScopePhase: (id) => set((state) => ({
+    data: {
+      ...state.data,
+      scopeOfWork: state.data.scopeOfWork.filter(p => p.id !== id)
+    }
+  })),
 
-  updateSettings: (settings) =>
-    set((state) => ({
-      data: { ...state.data, settings: { ...state.data.settings, ...settings } },
-    })),
+  addOptionalService: () => set((state) => ({
+    data: {
+      ...state.data,
+      optionalServices: [
+        ...state.data.optionalServices,
+        { id: generateId(), title: 'New Optional Service', price: 0, type: 'one-time', description: '', items: [] }
+      ]
+    }
+  })),
+  
+  updateOptionalService: (id, updates) => set((state) => ({
+    data: {
+      ...state.data,
+      optionalServices: state.data.optionalServices.map(s => s.id === id ? { ...s, ...updates } : s)
+    }
+  })),
 
-  setCustomNotes: (notes) =>
-    set((state) => ({
-      data: { ...state.data, customNotes: notes },
-    })),
+  removeOptionalService: (id) => set((state) => ({
+    data: {
+      ...state.data,
+      optionalServices: state.data.optionalServices.filter(s => s.id !== id)
+    }
+  })),
 
-  // ── Service CRUD ──
-
-  addService: () => {
-    const newServiceId = generateId();
-    const newPackageId = generateId();
-    set((state) => ({
-      data: {
-        ...state.data,
-        services: [
-          ...state.data.services,
-          {
-            id: newServiceId,
-            name: 'New Service',
-            description: '',
-            packages: [
-              {
-                id: newPackageId,
-                name: 'Package 01',
-                tagline: '',
-                features: [],
-                frontendTech: [],
-                backendTech: [],
-                designTools: [],
-                pages: '',
-                revisions: 2,
-                deliveryDays: 14,
-                supportDays: 7,
-                price: 0,
-              },
-            ],
-          },
-        ],
-        selectedServiceId: newServiceId,
-        selectedPackageId: newPackageId,
-      },
-    }));
-  },
-
-  updateService: (id, updates) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        services: state.data.services.map((s) =>
-          s.id === id ? { ...s, ...updates } : s
-        ),
-      },
-    })),
-
-  removeService: (id) =>
-    set((state) => {
-      const filtered = state.data.services.filter((s) => s.id !== id);
-      const needsReselect = state.data.selectedServiceId === id;
-      return {
-        data: {
-          ...state.data,
-          services: filtered,
-          selectedServiceId: needsReselect
-            ? filtered[0]?.id || ''
-            : state.data.selectedServiceId,
-          selectedPackageId: needsReselect
-            ? filtered[0]?.packages[0]?.id || ''
-            : state.data.selectedPackageId,
-        },
-      };
-    }),
-
-  selectService: (id) =>
-    set((state) => {
-      const service = state.data.services.find((s) => s.id === id);
-      return {
-        data: {
-          ...state.data,
-          selectedServiceId: id,
-          selectedPackageId: service?.packages[0]?.id || '',
-        },
-      };
-    }),
-
-  // ── Package CRUD ──
-
-  addPackage: (serviceId) =>
-    set((state) => {
-      const service = state.data.services.find((s) => s.id === serviceId);
-      const pkgNum = service ? service.packages.length + 1 : 1;
-      const newId = generateId();
-      return {
-        data: {
-          ...state.data,
-          services: state.data.services.map((s) =>
-            s.id === serviceId
-              ? {
-                ...s,
-                packages: [
-                  ...s.packages,
-                  {
-                    id: newId,
-                    name: `Package ${String(pkgNum).padStart(2, '0')}`,
-                    tagline: '',
-                    features: [],
-                    frontendTech: [],
-                    backendTech: [],
-                    designTools: [],
-                    pages: '',
-                    revisions: 2,
-                    deliveryDays: 14,
-                    supportDays: 7,
-                    price: 0,
-                  },
-                ],
-              }
-              : s
-          ),
-        },
-      };
-    }),
-
-  updatePackage: (serviceId, packageId, updates) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        services: state.data.services.map((s) =>
-          s.id === serviceId
-            ? {
-              ...s,
-              packages: s.packages.map((p) =>
-                p.id === packageId ? { ...p, ...updates } : p
-              ),
-            }
-            : s
-        ),
-      },
-    })),
-
-  removePackage: (serviceId, packageId) =>
-    set((state) => {
-      const service = state.data.services.find((s) => s.id === serviceId);
-      if (!service) return state;
-      const filtered = service.packages.filter((p) => p.id !== packageId);
-      const needsReselect = state.data.selectedPackageId === packageId;
-      return {
-        data: {
-          ...state.data,
-          services: state.data.services.map((s) =>
-            s.id === serviceId ? { ...s, packages: filtered } : s
-          ),
-          selectedPackageId: needsReselect
-            ? filtered[0]?.id || ''
-            : state.data.selectedPackageId,
-        },
-      };
-    }),
-
-  selectPackage: (packageId) =>
-    set((state) => ({
-      data: { ...state.data, selectedPackageId: packageId },
-    })),
+  loadTemplate: (type) => set((state) => {
+    let tpl;
+    if (type === 'ecommerce') tpl = ecommerceTemplate;
+    else if (type === 'saas') tpl = saasTemplate;
+    else if (type === 'service') tpl = serviceTemplate;
+    if (!tpl) return state;
+    
+    return { data: { ...state.data, ...tpl } as QuotationData };
+  }),
 }));

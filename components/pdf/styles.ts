@@ -3,12 +3,12 @@ import { StyleSheet } from '@react-pdf/renderer';
 export const styles = StyleSheet.create({
   // ── Page ──
   page: {
-    fontSize: 10,
+    fontSize: 11,
     color: '#374151',
-    lineHeight: 1.3,
+    lineHeight: 1.4,
     paddingTop: 30,
-    paddingBottom: 50,
-    paddingHorizontal: 30,
+    paddingBottom: 65, // Adjust exactly to clear the top border of the footer
+    paddingHorizontal: 35,
     fontFamily: 'Helvetica',
   },
 
@@ -17,18 +17,18 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 12, // Reduced from 16
+    paddingBottom: 8, // Reduced from 12
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },
   companyInfo: {
-    width: '50%',
+    width: '55%',
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
   logo: {
-    height: 35,
+    height: 40,
     objectFit: 'contain',
     marginBottom: 6,
   },
@@ -39,19 +39,20 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   companyAddress: {
-    fontSize: 8,
+    fontSize: 9,
     color: '#6B7280',
     marginBottom: 2,
+    lineHeight: 1.4,
   },
 
   // ── Quotation Meta ──
   quotationMeta: {
-    width: '45%',
+    width: '40%',
     alignItems: 'flex-end',
   },
   titleLabel: {
     fontSize: 20,
-    color: '#9CA3AF',
+    color: '#019689', // Teal accent
     textTransform: 'uppercase',
     letterSpacing: 2,
     marginBottom: 8,
@@ -60,30 +61,30 @@ export const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   metaLabel: {
-    fontSize: 8,
+    fontSize: 9,
     color: '#6B7280',
     fontFamily: 'Helvetica-Bold',
-    width: 60,
+    width: 65,
     textAlign: 'right',
-    marginRight: 6,
+    marginRight: 8,
   },
   metaValue: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: 'Helvetica-Bold',
     color: '#111827',
-    width: 80,
+    width: 85,
     textAlign: 'left',
   },
 
   // ── Quotation Title ──
   quotationTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Helvetica-Bold',
     color: '#111827',
-    marginBottom: 12,
+    marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -91,9 +92,9 @@ export const styles = StyleSheet.create({
   // ── Client ──
   clientSection: {
     flexDirection: 'row',
-    marginTop: 8,
-    marginBottom: 16,
-    paddingBottom: 10,
+    marginTop: 4,
+    marginBottom: 12, // Reduced from 16
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
@@ -101,7 +102,7 @@ export const styles = StyleSheet.create({
     width: '50%',
   },
   clientFor: {
-    fontSize: 8,
+    fontSize: 9,
     color: '#9CA3AF',
     fontFamily: 'Helvetica-Bold',
     textTransform: 'uppercase',
@@ -109,88 +110,49 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   clientName: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: 'Helvetica-Bold',
     color: '#111827',
   },
   clientCompany: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: 'Helvetica-Bold',
     color: '#374151',
     marginTop: 2,
   },
   clientDetail: {
-    fontSize: 8,
-    color: '#6B7280',
-    marginTop: 2,
-  },
-
-  // ── Service & Package Banner ──
-  serviceBanner: {
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 4,
-    padding: 12,
-    marginBottom: 16,
-    backgroundColor: '#FAFAFA',
-  },
-  serviceLabelSmall: {
-    fontSize: 8,
-    color: '#9CA3AF',
-    fontFamily: 'Helvetica-Bold',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  serviceName: {
-    fontSize: 14,
-    fontFamily: 'Helvetica-Bold',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  serviceDescription: {
     fontSize: 9,
     color: '#6B7280',
-    marginBottom: 10,
+    marginTop: 3,
   },
-  packageRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingTop: 10,
-    marginTop: 2,
-  },
-  packageName: {
+
+  // ── Generic Structured Content ──
+  sectionHeading: {
     fontSize: 11,
     fontFamily: 'Helvetica-Bold',
-    color: '#111827',
+    color: '#019689', // Teal accent
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    marginBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    paddingBottom: 4,
   },
-  packageTagline: {
-    fontSize: 8,
-    color: '#6B7280',
-    marginTop: 2,
-  },
-  packagePrice: {
-    fontSize: 16,
+  sectionHeadingAlt: {
+    fontSize: 10,
     fontFamily: 'Helvetica-Bold',
+    backgroundColor: '#F3F4F6',
+    padding: 6,
     color: '#111827',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
 
   // ── Features ──
-  sectionHeading: {
-    fontSize: 9,
-    fontFamily: 'Helvetica-Bold',
-    color: '#9CA3AF',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
   featuresGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
+    flexDirection: 'column',
+    marginBottom: 6,
   },
   featureItem: {
     width: '50%',
@@ -201,61 +163,37 @@ export const styles = StyleSheet.create({
   },
   featureCheck: {
     fontSize: 10,
-    color: '#111827',
+    color: '#019689', // Teal check
     marginRight: 6,
     fontFamily: 'Helvetica-Bold',
   },
   featureText: {
-    fontSize: 9,
+    fontSize: 10,
     color: '#374151',
     flex: 1,
-  },
-
-  // ── Project Scope Stats ──
-  statsRow: {
-    flexDirection: 'row',
-    marginBottom: 18,
-    gap: 8,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#F3F4F6',
-    paddingVertical: 12,
-  },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-    borderRightWidth: 1,
-    borderRightColor: '#F3F4F6',
-  },
-  statValue: {
-    fontSize: 14,
-    fontFamily: 'Helvetica-Bold',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: '#6B7280',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    lineHeight: 1.4,
   },
 
   // ── Technology Stack ──
   techSection: {
-    marginBottom: 16,
+    marginBottom: 12,
+    padding: 10,
+    backgroundColor: '#FAFAFA',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    borderRadius: 6,
   },
   techCategoryRow: {
     flexDirection: 'row',
     marginBottom: 6,
   },
   techCategoryLabel: {
-    fontSize: 8,
+    fontSize: 9,
     fontFamily: 'Helvetica-Bold',
-    color: '#6B7280',
+    color: '#4B5563',
     textTransform: 'uppercase',
-    width: 60,
-    marginTop: 2,
+    width: 65,
+    marginTop: 3,
   },
   techBadgesWrap: {
     flexDirection: 'row',
@@ -266,104 +204,97 @@ export const styles = StyleSheet.create({
   techBadgeFrontend: {
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
     paddingVertical: 3,
     paddingHorizontal: 6,
   },
   techBadgeFrontendText: {
-    fontSize: 7,
+    fontSize: 8,
     fontFamily: 'Helvetica-Bold',
     color: '#374151',
   },
-  techBadgeBackend: {
+  techBadgeBackend: { // Fixed: No longer black bg
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
     paddingVertical: 3,
     paddingHorizontal: 6,
   },
   techBadgeBackendText: {
-    fontSize: 7,
+    fontSize: 8,
     fontFamily: 'Helvetica-Bold',
     color: '#374151',
   },
   techBadgeDesign: {
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
     paddingVertical: 3,
     paddingHorizontal: 6,
   },
   techBadgeDesignText: {
-    fontSize: 7,
+    fontSize: 8,
     fontFamily: 'Helvetica-Bold',
     color: '#374151',
   },
 
   // ── Delivery Timeline ──
   deliveryBox: {
-    paddingVertical: 8,
-    marginBottom: 16,
+    paddingVertical: 4,
+    marginBottom: 12,
   },
   deliveryText: {
-    fontSize: 9,
+    fontSize: 10,
     color: '#374151',
-  },
-  deliveryBold: {
-    fontFamily: 'Helvetica-Bold',
-    color: '#111827',
-  },
-  deliverySmall: {
-    fontSize: 8,
-    color: '#6B7280',
-    marginTop: 4,
+    lineHeight: 1.5,
   },
 
   // ── Totals ──
-  totalsContainer: {
-    alignItems: 'flex-end',
-    marginBottom: 20,
-    marginTop: 10,
-  },
   totalsBox: {
-    width: 220,
     padding: 12,
     borderWidth: 1,
     borderColor: '#E5E7EB',
     backgroundColor: '#FAFAFA',
-    borderRadius: 4,
+    borderRadius: 6,
   },
   totalsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
   },
-  totalsLabel: { fontSize: 9, color: '#6B7280' },
-  totalsValue: { fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#111827' },
+  totalsLabel: { fontSize: 10, color: '#4B5563' },
+  totalsValue: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827' },
   grandTotalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 6,
-    paddingTop: 8,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: '#D1D5DB',
   },
   grandTotalLabel: { fontSize: 12, fontFamily: 'Helvetica-Bold', color: '#111827' },
-  grandTotalValue: { fontSize: 12, fontFamily: 'Helvetica-Bold', color: '#111827' },
+  grandTotalValue: { fontSize: 13, fontFamily: 'Helvetica-Bold', color: '#019689' },
 
   // ── Terms & Notes ──
   termsSection: {
     marginBottom: 12,
+    padding: 10,
+    backgroundColor: '#FAFAFA',
+    borderLeftWidth: 3,
+    borderLeftColor: '#019689', // Teal accent
   },
   termsText: {
-    fontSize: 8,
+    fontSize: 10,
     color: '#4B5563',
     lineHeight: 1.5,
   },
 
   // ── Footer Note ──
   footerNote: {
-    fontSize: 8,
+    fontSize: 9,
     color: '#9CA3AF',
     marginTop: 12,
     borderTopWidth: 1,
@@ -373,22 +304,20 @@ export const styles = StyleSheet.create({
 
   // ── Footer ──
   footer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 30,
-    right: 30,
+    marginTop: 40,
+    width: 250,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
     paddingTop: 8,
   },
-  signName: { fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#111827' },
-  signRole: { fontSize: 7, color: '#6B7280', marginTop: 2 },
-  signCompany: { fontSize: 7, fontFamily: 'Helvetica-Bold', color: '#111827', marginTop: 2 },
+  signName: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827', lineHeight: 1.2 },
+  signRole: { fontSize: 8, color: '#6B7280', marginTop: 1, lineHeight: 1.2 },
+  signCompany: { fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#111827', marginTop: 1, lineHeight: 1.2 },
 
   // ── Page Number ──
   pageNumber: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 15,
     left: 0,
     right: 0,
     textAlign: 'center',

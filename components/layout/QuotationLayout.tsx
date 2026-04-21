@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import QuotationForm from '../form/QuotationForm';
 import { useQuotationStore } from '@/lib/store';
 import { formatCurrency } from '@/lib/utils';
@@ -15,21 +15,9 @@ export default function QuotationLayout() {
     setMounted(true);
   }, []);
 
-  // Compute selected service & package for download button
-  const selectedService = useMemo(
-    () => data.services.find((s) => s.id === data.selectedServiceId),
-    [data.services, data.selectedServiceId]
-  );
-  const selectedPackage = useMemo(
-    () => selectedService?.packages.find((p) => p.id === data.selectedPackageId),
-    [selectedService, data.selectedPackageId]
-  );
-
-  const packagePrice = selectedPackage?.price || 0;
-  const taxAmount = packagePrice * (data.settings.taxRate / 100);
-  const grandTotal = packagePrice + taxAmount - data.settings.discount;
-
-  const hasNoSelection = !selectedService || !selectedPackage;
+  const baseTotal = data.pricing?.totalCost || 0;
+  const taxAmount = baseTotal * (data.settings.taxRate / 100);
+  const grandTotal = baseTotal + taxAmount - data.settings.discount;
 
   if (!mounted) {
     return (
@@ -44,7 +32,7 @@ export default function QuotationLayout() {
       {/* Container */}
       <div className="w-full max-w-4xl mx-auto flex flex-col pt-6 lg:pt-10 px-4 sm:px-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
-          Quotation Generator
+          Proposal Generator
         </h1>
         <QuotationForm />
       </div>
@@ -54,30 +42,24 @@ export default function QuotationLayout() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
             <span className="text-sm text-gray-500 font-medium">Grand Total</span>
-            <span className="text-xl sm:text-2xl font-bold text-[#019689]">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">
               {formatCurrency(grandTotal, data.settings.currency)}
             </span>
           </div>
 
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-            {hasNoSelection ? (
-              <span className="text-sm text-gray-400">Select a service and package to generate PDF</span>
-            ) : (
-              <Suspense
-                fallback={
-                  <div className="px-6 py-2.5 bg-gray-200 text-gray-500 rounded-md animate-pulse">
-                    Loading PDF...
-                  </div>
-                }
-              >
-                <PDFDownloadBtn
-                  data={data}
-                  service={selectedService}
-                  pkg={selectedPackage}
-                  totalAmounts={{ packagePrice, taxAmount, grandTotal }}
-                />
-              </Suspense>
-            )}
+            <Suspense
+              fallback={
+                <div className="px-6 py-2.5 bg-gray-200 text-gray-500 rounded-md animate-pulse">
+                  Loading PDF...
+                </div>
+              }
+            >
+              <PDFDownloadBtn
+                data={data}
+                totalAmounts={{ packagePrice: baseTotal, taxAmount, grandTotal }}
+              />
+            </Suspense>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuotationStore } from '@/lib/store';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import ServiceManager from './ServiceManager';
 import {
-  ChevronDown,
   FileText,
   User,
   Building2,
@@ -17,53 +16,35 @@ import {
   StickyNote,
 } from 'lucide-react';
 
-type SectionKey = 'details' | 'client' | 'company' | 'services' | 'notes' | 'settings';
-
 function FormSection({
   id,
   title,
   icon,
-  isOpen,
-  onToggle,
   badge,
   children,
 }: {
   id: string;
   title: string;
   icon: React.ReactNode;
-  isOpen: boolean;
-  onToggle: () => void;
   badge?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between hover:bg-gray-50/80 transition-colors"
-        id={`section-${id}`}
-      >
+    <div id={`section-${id}`} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div className="flex items-center gap-3">
           <span className="text-[#019689]">{icon}</span>
-          <span className="font-semibold text-gray-900 text-sm">{title}</span>
-          {badge && (
-            <span className="text-[10px] bg-[#019689]/10 text-[#019689] font-semibold px-2 py-0.5 rounded-full">
-              {badge}
-            </span>
-          )}
+          <h2 className="font-semibold text-gray-900 text-base">{title}</h2>
         </div>
-        <ChevronDown
-          className={`w-4.5 h-4.5 text-gray-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
-      </button>
-      {isOpen && (
-        <div className="px-4 sm:px-5 pb-5 pt-2 border-t border-gray-100">
-          {children}
-        </div>
-      )}
+        {badge && (
+          <span className="text-xs bg-[#019689]/10 text-[#019689] font-semibold px-2.5 py-1 rounded-full">
+            {badge}
+          </span>
+        )}
+      </div>
+      <div className="p-5">
+        {children}
+      </div>
     </div>
   );
 }
@@ -72,41 +53,26 @@ export default function QuotationForm() {
   const { data, updateCompany, updateClient, updateDetails, updateSettings, setCustomNotes } =
     useQuotationStore();
 
-  const [openSections, setOpenSections] = useState<Set<SectionKey>>(
-    new Set(['details', 'services'])
-  );
-
-  const toggleSection = (key: SectionKey) => {
-    setOpenSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
   return (
-    <div className="space-y-3 pb-20">
+    <div className="space-y-6">
       {/* ── Quotation Details ── */}
       <FormSection
         id="details"
         title="Quotation Details"
-        icon={<FileText className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('details')}
-        onToggle={() => toggleSection('details')}
+        icon={<FileText className="w-5 h-5" />}
       >
-        <div className="space-y-3 pt-2">
+        <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Quotation Title</Label>
+            <Label className="text-sm">Quotation Title</Label>
             <Input
               value={data.details.title}
               onChange={(e) => updateDetails({ title: e.target.value })}
               placeholder="e.g. Web Design & Development Service"
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Number</Label>
+              <Label className="text-sm">Number</Label>
               <Input
                 value={data.details.quotationNumber}
                 onChange={(e) =>
@@ -115,7 +81,7 @@ export default function QuotationForm() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Date</Label>
+              <Label className="text-sm">Date</Label>
               <Input
                 type="date"
                 value={data.details.date}
@@ -123,7 +89,7 @@ export default function QuotationForm() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Valid Until</Label>
+              <Label className="text-sm">Valid Until</Label>
               <Input
                 type="date"
                 value={data.details.validUntil}
@@ -138,14 +104,12 @@ export default function QuotationForm() {
       <FormSection
         id="client"
         title="Client Information"
-        icon={<User className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('client')}
-        onToggle={() => toggleSection('client')}
+        icon={<User className="w-5 h-5" />}
         badge={data.client.companyName || undefined}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Client Name</Label>
+            <Label className="text-sm">Client Name</Label>
             <Input
               value={data.client.contactName}
               onChange={(e) => updateClient({ contactName: e.target.value })}
@@ -153,7 +117,7 @@ export default function QuotationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Company</Label>
+            <Label className="text-sm">Company</Label>
             <Input
               value={data.client.companyName}
               onChange={(e) => updateClient({ companyName: e.target.value })}
@@ -161,17 +125,17 @@ export default function QuotationForm() {
             />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-xs">Address</Label>
+            <Label className="text-sm">Address</Label>
             <Textarea
               value={data.client.address}
               onChange={(e) => updateClient({ address: e.target.value })}
               placeholder="Client address"
               rows={2}
-              className="resize-none text-sm"
+              className="resize-none"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Email</Label>
+            <Label className="text-sm">Email</Label>
             <Input
               type="email"
               value={data.client.email}
@@ -179,7 +143,7 @@ export default function QuotationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Phone</Label>
+            <Label className="text-sm">Phone</Label>
             <Input
               value={data.client.phone}
               onChange={(e) => updateClient({ phone: e.target.value })}
@@ -191,38 +155,36 @@ export default function QuotationForm() {
       {/* ── Company Details ── */}
       <FormSection
         id="company"
-        title="Company Details"
-        icon={<Building2 className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('company')}
-        onToggle={() => toggleSection('company')}
+        title="Your Company Details"
+        icon={<Building2 className="w-5 h-5" />}
         badge={data.company.name || undefined}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Company Name</Label>
+            <Label className="text-sm">Company Name</Label>
             <Input
               value={data.company.name}
               onChange={(e) => updateCompany({ name: e.target.value })}
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Website</Label>
+            <Label className="text-sm">Website</Label>
             <Input
               value={data.company.website}
               onChange={(e) => updateCompany({ website: e.target.value })}
             />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-xs">Address</Label>
+            <Label className="text-sm">Address</Label>
             <Textarea
               value={data.company.address}
               onChange={(e) => updateCompany({ address: e.target.value })}
               rows={2}
-              className="resize-none text-sm"
+              className="resize-none"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Email</Label>
+            <Label className="text-sm">Email</Label>
             <Input
               type="email"
               value={data.company.email}
@@ -230,7 +192,7 @@ export default function QuotationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Phone</Label>
+            <Label className="text-sm">Phone</Label>
             <Input
               value={data.company.phone}
               onChange={(e) => updateCompany({ phone: e.target.value })}
@@ -243,52 +205,21 @@ export default function QuotationForm() {
       <FormSection
         id="services"
         title="Services & Packages"
-        icon={<Layers className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('services')}
-        onToggle={() => toggleSection('services')}
+        icon={<Layers className="w-5 h-5" />}
         badge={`${data.services.length} service${data.services.length !== 1 ? 's' : ''}`}
       >
-        <div className="pt-2">
-          <ServiceManager />
-        </div>
-      </FormSection>
-
-      {/* ── Terms & Notes ── */}
-      <FormSection
-        id="notes"
-        title="Terms & Notes"
-        icon={<StickyNote className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('notes')}
-        onToggle={() => toggleSection('notes')}
-      >
-        <div className="pt-2 space-y-1.5">
-          <Label className="text-xs">
-            Terms, conditions, or additional notes (shown on quotation)
-          </Label>
-          <Textarea
-            value={data.customNotes}
-            onChange={(e) => setCustomNotes(e.target.value)}
-            rows={5}
-            className="resize-none text-sm"
-            placeholder="Enter terms and conditions..."
-          />
-          <p className="text-[10px] text-gray-400">
-            Use bullet points (•) for a clean list format in the PDF.
-          </p>
-        </div>
+        <ServiceManager />
       </FormSection>
 
       {/* ── Settings ── */}
       <FormSection
         id="settings"
-        title="Settings"
-        icon={<Settings className="w-4.5 h-4.5" />}
-        isOpen={openSections.has('settings')}
-        onToggle={() => toggleSection('settings')}
+        title="Pricing Settings"
+        icon={<Settings className="w-5 h-5" />}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Currency</Label>
+            <Label className="text-sm">Currency</Label>
             <Select
               value={data.settings.currency}
               onChange={(e) =>
@@ -302,7 +233,7 @@ export default function QuotationForm() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Tax Rate (%)</Label>
+            <Label className="text-sm">Tax Rate (%)</Label>
             <Input
               type="number"
               min="0"
@@ -314,7 +245,7 @@ export default function QuotationForm() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Discount (Amount)</Label>
+            <Label className="text-sm">Discount (Amount)</Label>
             <Input
               type="number"
               min="0"
@@ -326,6 +257,30 @@ export default function QuotationForm() {
           </div>
         </div>
       </FormSection>
+
+      {/* ── Terms & Notes ── */}
+      <FormSection
+        id="notes"
+        title="Terms & Notes"
+        icon={<StickyNote className="w-5 h-5" />}
+      >
+        <div className="space-y-2">
+          <Label className="text-sm">
+            Terms, conditions, or additional notes (shown on quotation)
+          </Label>
+          <Textarea
+            value={data.customNotes}
+            onChange={(e) => setCustomNotes(e.target.value)}
+            rows={5}
+            className="resize-none"
+            placeholder="Enter terms and conditions..."
+          />
+          <p className="text-xs text-gray-500">
+            Use bullet points (•) for a clean list format in the PDF.
+          </p>
+        </div>
+      </FormSection>
     </div>
   );
 }
+

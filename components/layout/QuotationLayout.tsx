@@ -1,18 +1,35 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import QuotationForm from '../form/QuotationForm';
-import LivePreview from '../preview/LivePreview';
-import { Eye, Edit3 } from 'lucide-react';
+import { useQuotationStore } from '@/lib/store';
+import { formatCurrency } from '@/lib/utils';
+
+const PDFDownloadBtn = lazy(() => import('@/components/pdf/PDFDownloadBtn'));
 
 export default function QuotationLayout() {
-  const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
   const [mounted, setMounted] = useState(false);
+  const { data } = useQuotationStore();
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
+
+  // Compute selected service & package for download button
+  const selectedService = useMemo(
+    () => data.services.find((s) => s.id === data.selectedServiceId),
+    [data.services, data.selectedServiceId]
+  );
+  const selectedPackage = useMemo(
+    () => selectedService?.packages.find((p) => p.id === data.selectedPackageId),
+    [selectedService, data.selectedPackageId]
+  );
+
+  const packagePrice = selectedPackage?.price || 0;
+  const taxAmount = packagePrice * (data.settings.taxRate / 100);
+  const grandTotal = packagePrice + taxAmount - data.settings.discount;
+
+  const hasNoSelection = !selectedService || !selectedPackage;
 
   if (!mounted) {
     return (
@@ -23,58 +40,45 @@ export default function QuotationLayout() {
   }
 
   return (
-    <div className="w-full min-h-screen lg:h-screen bg-[#f3f4f6] text-gray-900 overflow-hidden flex flex-col py-0 lg:py-4 xl:py-6">
+    <div className="w-full min-h-screen bg-gray-50 text-gray-900 pb-28">
       {/* Container */}
-      <div className="w-full lg:max-w-[98%] xl:max-w-[95%] 2xl:max-w-[92%] mx-auto h-full flex flex-col lg:flex-row bg-white lg:rounded-2xl lg:shadow-2xl overflow-hidden border border-gray-200">
+      <div className="w-full max-w-4xl mx-auto flex flex-col pt-6 lg:pt-10 px-4 sm:px-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
+          Quotation Generator
+        </h1>
+        <QuotationForm />
+      </div>
 
-        {/* Mobile Tab Navigation */}
-        <div className="lg:hidden flex border-b bg-white shrink-0">
-          <button
-            className={`flex-1 py-3.5 flex items-center justify-center gap-2 font-medium text-sm ${
-              activeTab === 'form'
-                ? 'text-[#019689] border-b-2 border-[#019689]'
-                : 'text-gray-500'
-            }`}
-            onClick={() => setActiveTab('form')}
-          >
-            <Edit3 className="w-4 h-4" /> Edit
-          </button>
-          <button
-            className={`flex-1 py-3.5 flex items-center justify-center gap-2 font-medium text-sm ${
-              activeTab === 'preview'
-                ? 'text-[#019689] border-b-2 border-[#019689]'
-                : 'text-gray-500'
-            }`}
-            onClick={() => setActiveTab('preview')}
-          >
-            <Eye className="w-4 h-4" /> Preview
-          </button>
-        </div>
-
-        {/* Form Panel */}
-        <div
-          className={`w-full lg:w-[42%] xl:w-[40%] flex-col bg-gray-50/30 border-r border-gray-200 h-full overflow-y-auto ${
-            activeTab === 'form' ? 'flex' : 'hidden lg:flex'
-          }`}
-        >
-          <div className="p-4 sm:p-6 lg:p-8">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
-              <span className="bg-[#019689] text-white p-1.5 sm:p-2 rounded-lg">
-                <Edit3 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </span>
-              Quotation Setup
-            </h1>
-            <QuotationForm />
+      {/* Sticky Bottom Bar for PDF Download */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
+            <span className="text-sm text-gray-500 font-medium">Grand Total</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#019689]">
+              {formatCurrency(grandTotal, data.settings.currency)}
+            </span>
           </div>
-        </div>
 
-        {/* Preview Panel */}
-        <div
-          className={`w-full lg:w-[58%] xl:w-[60%] flex-col h-full bg-gray-100 overflow-hidden relative ${
-            activeTab === 'preview' ? 'flex' : 'hidden lg:flex'
-          }`}
-        >
-          <LivePreview />
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+            {hasNoSelection ? (
+              <span className="text-sm text-gray-400">Select a service and package to generate PDF</span>
+            ) : (
+              <Suspense
+                fallback={
+                  <div className="px-6 py-2.5 bg-gray-200 text-gray-500 rounded-md animate-pulse">
+                    Loading PDF...
+                  </div>
+                }
+              >
+                <PDFDownloadBtn
+                  data={data}
+                  service={selectedService}
+                  pkg={selectedPackage}
+                  totalAmounts={{ packagePrice, taxAmount, grandTotal }}
+                />
+              </Suspense>
+            )}
+          </div>
         </div>
       </div>
     </div>

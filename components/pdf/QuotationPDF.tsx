@@ -44,7 +44,7 @@ export const QuotationPDF = ({
             <Text style={styles.companyAddress}>
               {data.company.email} | {data.company.phone}
             </Text>
-            <Text style={{ ...styles.companyAddress, color: '#019689' }}>
+            <Text style={{ ...styles.companyAddress, color: '#4B5563', marginTop: 2 }}>
               {data.company.website}
             </Text>
           </View>
@@ -96,15 +96,15 @@ export const QuotationPDF = ({
         <View style={styles.serviceBanner}>
           <Text style={styles.serviceLabelSmall}>Service</Text>
           <Text style={styles.serviceName}>{service.name}</Text>
-          {service.description ? (
+          {service.description && (
             <Text style={styles.serviceDescription}>{service.description}</Text>
-          ) : null}
+          )}
           <View style={styles.packageRow}>
             <View>
               <Text style={styles.packageName}>{pkg.name}</Text>
-              {pkg.tagline ? (
+              {pkg.tagline && (
                 <Text style={styles.packageTagline}>{pkg.tagline}</Text>
-              ) : null}
+              )}
             </View>
             <Text style={styles.packagePrice}>
               {formatCurrency(pkg.price, data.settings.currency)}
@@ -114,7 +114,7 @@ export const QuotationPDF = ({
 
         {/* Features */}
         {pkg.features.length > 0 && (
-          <View>
+          <View wrap={false}>
             <Text style={styles.sectionHeading}>What&apos;s Included</Text>
             <View style={styles.featuresGrid}>
               {pkg.features.map((feature, i) => (
@@ -143,7 +143,7 @@ export const QuotationPDF = ({
             <Text style={styles.statValue}>{pkg.deliveryDays}</Text>
             <Text style={styles.statLabel}>Delivery Days</Text>
           </View>
-          <View style={styles.statBox}>
+          <View style={{ ...styles.statBox, borderRightWidth: 0 }}>
             <Text style={styles.statValue}>{pkg.supportDays}</Text>
             <Text style={styles.statLabel}>Support Days</Text>
           </View>
@@ -151,11 +151,11 @@ export const QuotationPDF = ({
 
         {/* Technology Stack */}
         {hasTech && (
-          <View style={styles.techSection}>
+          <View style={styles.techSection} wrap={false}>
             <Text style={styles.sectionHeading}>Technology Stack</Text>
 
             {pkg.frontendTech.length > 0 && (
-              <View style={styles.techCategoryRow} wrap={false}>
+              <View style={styles.techCategoryRow}>
                 <Text style={styles.techCategoryLabel}>Frontend</Text>
                 <View style={styles.techBadgesWrap}>
                   {pkg.frontendTech.map((tech, i) => (
@@ -168,7 +168,7 @@ export const QuotationPDF = ({
             )}
 
             {pkg.backendTech.length > 0 && (
-              <View style={styles.techCategoryRow} wrap={false}>
+              <View style={styles.techCategoryRow}>
                 <Text style={styles.techCategoryLabel}>Backend</Text>
                 <View style={styles.techBadgesWrap}>
                   {pkg.backendTech.map((tech, i) => (
@@ -181,7 +181,7 @@ export const QuotationPDF = ({
             )}
 
             {pkg.designTools.length > 0 && (
-              <View style={styles.techCategoryRow} wrap={false}>
+              <View style={styles.techCategoryRow}>
                 <Text style={styles.techCategoryLabel}>Design</Text>
                 <View style={styles.techBadgesWrap}>
                   {pkg.designTools.map((tool, i) => (
@@ -211,10 +211,10 @@ export const QuotationPDF = ({
         </View>
 
         {/* Investment Summary */}
-        <View>
+        <View wrap={false}>
           <Text style={styles.sectionHeading}>Investment Summary</Text>
           <View style={styles.totalsContainer}>
-            <View style={styles.totalsBox} wrap={false}>
+            <View style={styles.totalsBox}>
               <View style={styles.totalsRow}>
                 <Text style={styles.totalsLabel}>Package Price</Text>
                 <Text style={styles.totalsValue}>
@@ -233,10 +233,10 @@ export const QuotationPDF = ({
               )}
               {data.settings.discount > 0 && (
                 <View style={styles.totalsRow}>
-                  <Text style={{ ...styles.totalsLabel, color: '#16A34A' }}>
+                  <Text style={styles.totalsLabel}>
                     Discount
                   </Text>
-                  <Text style={{ ...styles.totalsValue, color: '#16A34A' }}>
+                  <Text style={styles.totalsValue}>
                     -{formatCurrency(data.settings.discount, data.settings.currency)}
                   </Text>
                 </View>

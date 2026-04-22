@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     color: '#374151',
     lineHeight: 1.4,
     paddingTop: 30,
-    paddingBottom: 65, // Adjust exactly to clear the top border of the footer
+    paddingBottom: 40,
     paddingHorizontal: 35,
     fontFamily: 'Helvetica',
   },
@@ -134,9 +134,6 @@ export const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.5,
     marginBottom: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-    paddingBottom: 4,
   },
   sectionHeadingAlt: {
     fontSize: 10,
@@ -280,8 +277,9 @@ export const styles = StyleSheet.create({
 
   // ── Terms & Notes ──
   termsSection: {
+    marginTop: 24, // Added gap based on user feedback
     marginBottom: 12,
-    padding: 10,
+    padding: 12,
     backgroundColor: '#FAFAFA',
     borderLeftWidth: 3,
     borderLeftColor: '#019689', // Teal accent

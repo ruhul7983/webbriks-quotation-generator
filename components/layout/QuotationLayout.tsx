@@ -15,9 +15,17 @@ export default function QuotationLayout() {
     setMounted(true);
   }, []);
 
-  const baseTotal = data.pricing?.totalCost || 0;
-  const taxAmount = baseTotal * (data.settings.taxRate / 100);
-  const grandTotal = baseTotal + taxAmount - data.settings.discount;
+  const baseTotal = data.serviceType === 'product-photography' 
+    ? data.photographyItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+    : data.pricing?.totalCost || 0;
+    
+  const additionalTotal = (data.optionalServices && data.serviceType === 'web-development') 
+    ? data.optionalServices.reduce((sum, item) => sum + item.price, 0) 
+    : 0;
+  
+  const subTotal = baseTotal + additionalTotal;
+  const taxAmount = subTotal * (data.settings.taxRate / 100);
+  const grandTotal = subTotal + taxAmount - data.settings.discount;
 
   if (!mounted) {
     return (
@@ -57,7 +65,7 @@ export default function QuotationLayout() {
             >
               <PDFDownloadBtn
                 data={data}
-                totalAmounts={{ packagePrice: baseTotal, taxAmount, grandTotal }}
+                totalAmounts={{ packagePrice: baseTotal, additionalTotal, taxAmount, grandTotal }}
               />
             </Suspense>
           </div>

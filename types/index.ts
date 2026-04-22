@@ -1,3 +1,5 @@
+export type ServiceType = 'web-development' | 'product-photography';
+
 export interface CompanyDetails {
   logo?: string;
   name: string;
@@ -33,10 +35,11 @@ export interface TechStack {
   frontend: string[];
   backend: string[];
   tools: string[];
+  database: string[];
 }
 
 export interface Settings {
-  currency: '$' | '৳';
+  currency: '$' | '৳' | '€' | '£';
   taxRate: number;
   discount: number;
 }
@@ -50,7 +53,16 @@ export interface OptionalService {
   type: 'recurring' | 'one-time';
 }
 
+export interface PhotographyItem {
+  id: string;
+  title: string;
+  outputString: string;
+  quantity: number;
+  price: number;
+}
+
 export interface QuotationData {
+  serviceType: ServiceType;
   company: CompanyDetails;
   client: ClientDetails;
   details: QuotationDetails;
@@ -70,6 +82,7 @@ export interface QuotationData {
   };
   
   optionalServices: OptionalService[];
+  photographyItems: PhotographyItem[];
   
   workflow: string[];
   finalNote: string;

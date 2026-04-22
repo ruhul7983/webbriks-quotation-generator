@@ -11,6 +11,7 @@ interface Props {
   data: QuotationData;
   totalAmounts: {
     packagePrice: number;
+    additionalTotal: number;
     taxAmount: number;
     grandTotal: number;
   };
@@ -23,6 +24,7 @@ export default function PDFDownloadBtn({ data, totalAmounts }: Props) {
         <QuotationPDF
           data={data}
           packagePrice={totalAmounts.packagePrice}
+          additionalTotal={totalAmounts.additionalTotal}
           taxAmount={totalAmounts.taxAmount}
           grandTotal={totalAmounts.grandTotal}
         />

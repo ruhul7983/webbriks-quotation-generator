@@ -191,6 +191,21 @@ export const QuotationPDF = ({
         )}
 
 
+        {/* ── WORKFLOW SUMMARY ── */}
+        {data.serviceType === 'web-development' && data.workflow.length > 0 && (
+          <View style={{ marginBottom: 12 }}>
+            <Text style={styles.sectionHeading}>Workflow Summary</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              {data.workflow.map((step, i) => (
+                <View key={i} wrap={false} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
+                  <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827', marginRight: 5 }}>{i + 1}.</Text>
+                  <Text style={{ fontSize: 10, color: '#4B5563' }}>{step}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         {/* ── OPTIONAL SERVICES ── */}
         {data.serviceType === 'web-development' && data.optionalServices.length > 0 && (
           <View style={{ marginBottom: 12 }}>
@@ -238,23 +253,6 @@ export const QuotationPDF = ({
                             <View key={i} wrap={false} style={{ width: '50%', flexDirection: 'row', paddingRight: 10 }}>
                               <Text style={{ fontSize: 9, color: '#019689', marginRight: 6, fontFamily: 'Helvetica-Bold' }}>✓</Text>
                               <Text style={{ fontSize: 9, color: '#374151', flex: 1, lineHeight: 1.3 }}>{inc}</Text>
-                            </View>
-                          ))}
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                )}
-                {data.pricing.notIncluded.length > 0 && (
-                  <View>
-                    <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827', marginBottom: 6 }}>Not Included:</Text>
-                    <View style={styles.featuresGrid}>
-                      {chunk(data.pricing.notIncluded, 2).map((row, rowIdx) => (
-                        <View key={rowIdx} style={{ flexDirection: 'row', marginBottom: 4 }}>
-                          {row.map((ninc, i) => (
-                            <View key={i} wrap={false} style={{ width: '50%', flexDirection: 'row', paddingRight: 10 }}>
-                              <Text style={{ fontSize: 9, color: '#9CA3AF', marginRight: 6, fontFamily: 'Helvetica-Bold' }}>✗</Text>
-                              <Text style={{ fontSize: 9, color: '#6B7280', flex: 1, lineHeight: 1.3 }}>{ninc}</Text>
                             </View>
                           ))}
                         </View>
@@ -336,19 +334,6 @@ export const QuotationPDF = ({
             </Text>
           </View>
         </View>
-        {data.serviceType === 'web-development' && data.workflow.length > 0 && (
-          <View style={{ marginBottom: 12, marginTop: 10 }}>
-            <Text style={styles.sectionHeading}>Workflow Summary</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {data.workflow.map((step, i) => (
-                <View key={i} wrap={false} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
-                  <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827', marginRight: 5 }}>{i + 1}.</Text>
-                  <Text style={{ fontSize: 10, color: '#4B5563' }}>{step}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
 
         {/* ── FINAL NOTE ── */}
         {data.finalNote && (

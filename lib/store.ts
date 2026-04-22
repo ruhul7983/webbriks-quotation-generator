@@ -159,7 +159,7 @@ const ecommerceTemplate: Partial<QuotationData> = {
     "Delivery",
   ],
   finalNote:
-    "We focus on building business-ready eCommerce solutions that help brands grow online smoothly.",
+    "We focus on building business-ready eCommerce solutions that help brands grow smoothly online. Please note that domain, hosting, and any third-party subscriptions are not included in this price",
 };
 
 const saasTemplate: Partial<QuotationData> = {
@@ -390,7 +390,7 @@ export const useQuotationStore = create<QuotationStore>((set) => ({
         overview =
           "We will design and develop a complete e-commerce website tailored to your business, inspired by modern platforms, ensuring a clean, user-friendly, and conversion-focused experience.";
         finalNote =
-          "We focus on building business-ready eCommerce solutions that help brands grow online smoothly.";
+          "We focus on building business-ready eCommerce solutions that help brands grow smoothly online. Please note that domain, hosting, and any third-party subscriptions are not included in this price";
         if (
           title === "Product Photography Quotation" ||
           title.includes("Photography")

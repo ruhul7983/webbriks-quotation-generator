@@ -233,9 +233,53 @@ export const QuotationPDF = ({
             ))}
           </View>
         )}
-
+        {/* ── PAYMENT TERMS (Web Development only) ── */}
+        {data.serviceType === 'web-development' && (
+          <View wrap={false} style={{ marginBottom: 14, padding: 10, backgroundColor: '#F0FDFA', borderLeftWidth: 3, borderLeftColor: '#019689', borderRadius: 4 }}>
+            <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#111827', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              Payment Terms
+            </Text>
+            {/* Three milestone rows */}
+            <View style={{ flexDirection: 'row', marginBottom: 8, gap: 8 }}>
+              <View style={{ flex: 1, padding: 8, backgroundColor: '#FFFFFF', borderRadius: 4, borderWidth: 1, borderColor: '#99F6E4', flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#0D9488', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#FFFFFF' }}>50%</Text>
+                </View>
+                <View>
+                  <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#111827' }}>Advance Payment</Text>
+                  <Text style={{ fontSize: 8, color: '#6B7280' }}>Before starting the project</Text>
+                </View>
+              </View>
+              <View style={{ flex: 1, padding: 8, backgroundColor: '#FFFFFF', borderRadius: 4, borderWidth: 1, borderColor: '#99F6E4', flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#14B8A6', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#FFFFFF' }}>30%</Text>
+                </View>
+                <View>
+                  <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#111827' }}>After Development</Text>
+                  <Text style={{ fontSize: 8, color: '#6B7280' }}>Before final delivery</Text>
+                </View>
+              </View>
+              <View style={{ flex: 1, padding: 8, backgroundColor: '#FFFFFF', borderRadius: 4, borderWidth: 1, borderColor: '#99F6E4', flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#2DD4BF', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#FFFFFF' }}>20%</Text>
+                </View>
+                <View>
+                  <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#111827' }}>Final Payment</Text>
+                  <Text style={{ fontSize: 8, color: '#6B7280' }}>After project handover</Text>
+                </View>
+              </View>
+            </View>
+            {/* Note */}
+            <View style={{ backgroundColor: '#CCFBF1', borderRadius: 4, padding: 7, borderWidth: 1, borderColor: '#99F6E4' }}>
+              <Text style={{ fontSize: 9, color: '#134E4A', fontFamily: 'Helvetica-Oblique' }}>
+                <Text style={{ fontFamily: 'Helvetica-BoldOblique' }}>Note: </Text>
+                Work will begin only after the initial advance payment is received.
+              </Text>
+            </View>
+          </View>
+        )}
         {/* ── PRICING MATRIX ── */}
-        {data.serviceType === 'web-development' ? (
+        {data.serviceType === 'web-development' && (
           <View style={{ marginBottom: 12 }}>
             <Text style={styles.sectionHeading}>Website Pricing</Text>
 
@@ -263,7 +307,12 @@ export const QuotationPDF = ({
               </View>
             </View>
           </View>
-        ) : (
+        )}
+
+
+
+        {/* ── PHOTOGRAPHY PACKAGES ── */}
+        {data.serviceType === 'product-photography' && (
           <View style={{ marginBottom: 5 }}>
             <Text style={styles.sectionHeading}>Photography Packages & Scope</Text>
 

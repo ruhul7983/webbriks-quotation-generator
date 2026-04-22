@@ -231,18 +231,66 @@ export default function QuotationForm() {
       </div>
 
       {/* ── Pricing Base ── */}
-      {data.serviceType === 'web-development' ? (
+      {data.serviceType === 'web-development' && ( // Changed '?' to '&&'
         <FormSection id="pricing" title="Website Pricing" icon={<Settings className="w-5 h-5" />}>
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-sm text-gray-900 font-bold">Total Base Cost (Fixed)</Label>
-                <Input type="number" value={data.pricing.totalCost} onChange={e => updatePricing({ totalCost: Number(e.target.value) })} />
+                <Input
+                  type="number"
+                  value={data.pricing.totalCost}
+                  onChange={e => updatePricing({ totalCost: Number(e.target.value) })}
+                />
               </div>
             </div>
           </div>
         </FormSection>
-      ) : (
+      )}
+
+      {/* ── Payment Terms (Web Development only) ── */}
+      {data.serviceType === 'web-development' && (
+        <div className="border border-teal-200 rounded-xl bg-teal-50/40 overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-teal-100 flex items-center gap-3 bg-teal-50">
+            <span className="text-teal-700">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+            </span>
+            <h2 className="font-semibold text-teal-900 text-base">Payment Terms</h2>
+            <span className="ml-auto text-xs bg-teal-200 text-teal-800 font-semibold px-2.5 py-1 rounded-full">Auto-included in PDF</span>
+          </div>
+          <div className="p-5 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-teal-100 shadow-sm">
+                <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-sm shrink-0">50%</div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700">Advance Payment</p>
+                  <p className="text-xs text-gray-500">Before starting the project</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-teal-100 shadow-sm">
+                <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center text-white font-bold text-sm shrink-0">30%</div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700">After Development</p>
+                  <p className="text-xs text-gray-500">Before final delivery</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-teal-100 shadow-sm">
+                <div className="w-10 h-10 rounded-full bg-teal-400 flex items-center justify-center text-white font-bold text-sm shrink-0">20%</div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700">Final Payment</p>
+                  <p className="text-xs text-gray-500">After project handover</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-teal-800 bg-teal-100 border border-teal-200 rounded-md px-3 py-2">
+              <span className="font-semibold">Note:</span> Work will begin only after the initial advance payment is received.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Photography Packages (non-web) ── */}
+      {data.serviceType !== 'web-development' && (
         <FormSection id="photography" title="Photography Packages" icon={<Camera className="w-5 h-5" />}>
           <div className="space-y-4">
             {data.photographyItems.map((item) => (

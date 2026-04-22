@@ -77,38 +77,69 @@ const ecommerceTemplate: Partial<QuotationData> = {
       items: [
         "Full UI design shared for review.",
         "Feedback and revisions finalized in this phase.",
-        "Upon approval, development begins.",
-      ],
+        "Upon approval, development begins."
+      ]
     },
     {
       id: generateId(),
       title: "Frontend Development Phase",
       description: "",
       items: [
+        "Homepage with banners & featured sections",
         "Product listing with categories & filters",
         "Product details page",
-        "Add to cart & checkout system",
-        "Mobile optimized speed performance",
-      ],
+        "Search functionality",
+        "Shopping cart system",
+        "Checkout process",
+        "User login & registration",
+        "Order tracking interface",
+        "Offers & discount display",
+        "Contact & support pages",
+        "Newsletter subscription",
+        "Mobile responsive design"
+      ]
     },
     {
       id: generateId(),
       title: "Admin Dashboard & Backend Phase",
       description: "",
       items: [
-        "User login / registration",
-        "Order placement & tracking",
-        "Product & Category Management",
-        "Inventory & Order Management",
-        "Customer Management",
-      ],
+        "Admin dashboard overview",
+        "User & role management",
+        "Product & category management",
+        "Inventory management",
+        "Order management & status tracking",
+        "Customer management",
+        "Shopping cart monitoring",
+        "Payment management",
+        "Coupon & discount management",
+        "Review & rating management",
+        "Marketing tools & campaign management",
+        "Analytics & sales reports",
+        "Courier integration & parcel booking",
+        "Shipment tracking from courier",
+        "Fraud detection & order validation",
+        "CMS & content management",
+        "Contact & support management",
+        "System settings & configuration"
+      ]
     },
     {
       id: generateId(),
       title: "Marketing & SEO Phase",
       description: "",
-      items: ["Facebook Pixel setup", "Conversion tracking ready structure"],
-    },
+      items: [
+        "Facebook Pixel integration",
+        "Google Analytics (GA4) setup",
+        "Conversion tracking ready structure",
+        "Custom data layer implementation",
+        "Google Tag Manager (GTM) integration",
+        "Event tracking (add to cart, purchase, etc.)",
+        "Ecommerce tracking setup",
+        "Page speed & performance optimization",
+        "Search engine indexing setup (Google Search Console)"
+      ]
+    }
   ],
   techStack: {
     frontend: ["Next.js", "Tailwind CSS", "shadcn UI"],
